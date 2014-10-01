@@ -18,7 +18,7 @@
 \begin{document}
 
 \title{{\bf miRNAtap} example use}
-\author{Maciej Pajak, Ian Simpson}
+\author{Maciej Pajak, T. Ian Simpson}
 \date{\today}
 
 \maketitle

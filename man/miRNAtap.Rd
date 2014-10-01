@@ -23,6 +23,6 @@ targets_mouse <- getPredictedTargets('let-7a',species='mmu', method='geom')
 targets_rat <- getPredictedTargets('let-7a',species='mmu', method='geom')
 }
 \author{
-Maciej Pajak \email{m.pajak@sms.ed.ac.uk}, Ian Simpson
+Maciej Pajak \email{m.pajak@sms.ed.ac.uk}, T. Ian Simpson
 }
 
