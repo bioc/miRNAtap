@@ -41,7 +41,7 @@
 
 
 .getLCcolnames <- function(x) {
-    con <- AnnotationDbi:::dbConn(x)
+    con <- AnnotationDbi:::dbconn(x)
     list <- dbListTables(con)
     list <- list[!list %in% c('metadata')]
     return(list)
@@ -65,7 +65,7 @@
     tabNames <- .getTableNames(x)
     lckeytype <- names(tabNames[tabNames %in% keytype])
     
-    con <- AnnotationDbi:::dbConn(x)
+    con <- AnnotationDbi:::dbconn(x)
     
     if (keytype %in% c('HOMOLOGENE_RAW')) {
         sql <- paste("SELECT DISTINCT entrez FROM ", lckeytype , sep='')
@@ -83,7 +83,7 @@
     tabNames <- .getTableNames(x)
     lckeytype <- names(tabNames[tabNames %in% keytype])
     
-    con <- AnnotationDbi:::dbConn(x)
+    con <- AnnotationDbi:::dbconn(x)
     
     if (keytype %in% c('HOMOLOGENE_RAW')) {
         one_string <- paste('"', paste(keys,collapse='","'), '"', sep='')

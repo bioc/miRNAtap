@@ -104,7 +104,7 @@ translate <- function(entrezes, from = 'mmu', to = 'rno', ...) {
     tryCatch( {
         require(miRNAtap.db)
         
-        conL <- AnnotationDbi:::dbConn(miRNAtap.db)
+        conL <- AnnotationDbi:::dbconn(miRNAtap.db)
         species_map <- data.frame(code=c('mmu','rno','hsa'),
                     tax_id=c('10090','10116','9606'), stringsAsFactors=FALSE)
 
