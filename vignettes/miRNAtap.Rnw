@@ -18,7 +18,7 @@
 \begin{document}
 
 \title{{\bf miRNAtap} example use}
-\author{Maciej Pajak, T. Ian Simpson}
+\author{Maciej Pajak, Ian Simpson}
 \date{\today}
 
 \maketitle
@@ -60,7 +60,7 @@ This section briefly describes the necessary steps to get {\tt
 miRNAtap} running on your system. We assume that the user has the R 
 program (see the R project at http://www.r-project.org) already installed 
 and is familiar with it. 
-You will need to have R 3.0.0 or later to be able to install and run {\tt 
+You will need to have R 3.2.0 or later to be able to install and run {\tt 
 miRNAtap}.
 The miRNAtap package is available from the Bioconductor repository at 
 http://www.bioconductor.org To be
