@@ -42,7 +42,7 @@ NULL
 #'
 #' @usage getPredictedTargets(mirna, sources = c("pictar", "diana", 
 #' "targetscan", "miranda"), species = "mmu", min_src = 2, 
-#' method = "min", promote = TRUE, ...)
+#' method = "geom", promote = TRUE, ...)
 #' @param mirna miRNA in a standard format
 #' @param sources a list of sources to use for aggregation, 
 #' default c('pictar','diana','targetscan','miranda')
@@ -51,12 +51,13 @@ NULL
 #' @param min_src minimum number of sources required for a target to be 
 #' considered, default 2
 #' @param method method of aggregation - choose from 'min', 'max', 'geom', 
-#' default 'min' is a minimum of ranks, 'max' is a maximum of ranks, and 'geom' 
+#' 'min' is a minimum of ranks, 'max' is a maximum of ranks, and default 'geom' 
 #' is based on geometric mean of the ranks, it proves to be the most accurate.
 #' @param promote add weights to improve accuracy of the method, default TRUE
 #' @param ... any optional arguments
 #' @return a data.frame object where row names are entrez IDs of target genes, 
-#' ranks from individual sources and aggregated rank are shown in columns
+#' ranks from individual sources and aggregated rank are shown in columns.
+#' If no targets are found in any of the sources NULL and a warning is returned.
 #' @export
 #' @author Maciej Pajak \email{m.pajak@@sms.ed.ac.uk}
 #' @references
@@ -79,13 +80,14 @@ NULL
 #' W145-8.
 #' @examples
 #' 
-#' targets <- getPredictedTargets('let-7a',species='mmu') 
+#' targets <- getPredictedTargets('let-7a',species='mmu', method = 'min') 
 #' head(targets) #top of the list with minimum aggregation
 #' targets2 <- getPredictedTargets('let-7a',species='mmu', method='geom') 
 #' head(targets2) #top of the list with geometric mean aggregation
 getPredictedTargets <- function(mirna,
             sources=c('pictar','diana','targetscan','miranda'), 
-            species = 'mmu', min_src = 2, method = 'min', promote = TRUE, ...) {
+            species = 'mmu', min_src = 2, method = 'geom',
+            promote = TRUE, ...) {
 
             if (!(species %in% c('mmu','hsa','rno','dme'))) {
         warning(paste('species ',species,
@@ -136,6 +138,11 @@ getPredictedTargets <- function(mirna,
     }
     
     valid_srcs <- (1:(n_sources+1))[colSums(merged.scores,na.rm = TRUE)>0]
+    
+    if (length(valid_srcs)<2) { # less than 2 cos the first column isnt src 
+        warning(paste('no targets found for mirna ', mirna, sep = ''))
+        return(NULL)
+    }
     
     n_valid_srcs <- length(valid_srcs)-1
     
