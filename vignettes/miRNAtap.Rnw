@@ -131,7 +131,7 @@ best when tested against experimental data from MirBase
 We can compare it to the top of the list of the output of {\it mimumum} method:
 
 <<>>=
-predictions_min = getPredictedTargets(mir, species = 'hsa', 
+predictions_min = getPredictedTargets(mir, species = 'hsa',
                                     method = 'min', min_src = 2)
 head(predictions_min)
 @
@@ -143,7 +143,7 @@ The operation happens automatically if we specify species as {\tt rno} (for
 {\it Rattus norvegicus})
 
 <<>>=
-predictions_rat = getPredictedTargets(mir, species = 'rno', 
+predictions_rat = getPredictedTargets(mir, species = 'rno',
                                     method = 'geom', min_src = 2)
 @
 

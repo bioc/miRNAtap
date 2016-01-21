@@ -4,14 +4,18 @@
 
 #' @title Get target list from a single source
 #'
-#' @details This function queries precompiled annotation SQLite database
+#' @description This function queries precompiled annotation SQLite database
 #' which contains miRNA - target gene associations with their respective scores.
-#'
-#' @param mirna miRNA in a standard format
-#' @param source a list of sources to use for aggregation, default 'diana'
-#' @param species species in a standard three-letter acronym, default 'mmu'
-#' @return a data.frame object with entrez IDs of target genes and their scores
 #' @export
+#' @param mirna miRNA in a standard format
+#' @param source a source target prediction algorithm table to query, default 
+#' \code{'diana'}, other possible values are \code{'miranda'}, 
+#' \code{'targetscan'}, and \code{'pictar'}.
+#' @param species species in a standard three-letter acronym, default 
+#' \code{'mmu'}
+#' @return \code{data.frame} object with entrez IDs of target genes and their
+#' scores, if there are no targets found for a given miRNA in a given 
+#' table then an empty 
 #' @author Maciej Pajak \email{m.pajak@@sms.ed.ac.uk}
 #' @references
 #' Friedman, R. C., Farh, K. K.-H., Burge, C. B., and Bartel, D. P. (2009). 
@@ -33,7 +37,8 @@
 #' W145-8.
 #' @examples
 #' targets <- getTargetsFromSource('let-7a', species='hsa', source='targetscan')
-#' head(targets) #top of the list for TargetScan only
+#' head(targets) 
+#' #top of the listof human targets of let-7a from TargetScan only
 getTargetsFromSource <- function(mirna, species = 'mmu', source = 'diana') {
     tryCatch( {
         require(miRNAtap.db)
@@ -82,19 +87,19 @@ getTargetsFromSource <- function(mirna, species = 'mmu', source = 'diana') {
 #####################
 
 
-#' @title Homology translation for miRNAtap
+#' @title Homology transfer for miRNAtap
 #'
-#' @details 
-#' Translates gene ID using homology information from homologene.
-#' 
+#' @description 
+#' This function maps gene entrez ID between species using homology information 
+#' from Homologene.
+#'
 #' @param entrezes data.frame with entrez Gene IDs and their scores
-#' @param from origin species
-#' @param to target species
+#' @param from origin species, default \code{'mmu'}, Mus musculus
+#' @param to target species, default
 #' @param ... any optional arguments
-#'
+#' @export
 #' @return data.frame object with orthologous genes' entrez IDs and 
 #' corresponding scores
-#' @export
 #' @author Maciej Pajak \email{m.pajak@@sms.ed.ac.uk}    
 #' @examples
 #' mouse_genes <- data.frame(GeneID = 

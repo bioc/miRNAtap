@@ -2,7 +2,8 @@
 #' @docType package
 #' @name miRNAtap
 #' @title miRNAtap: microRNA Targets - Aggregated Predictions.
-#' @details It is a package with tools to facilitate implementation of workflows
+#' @description It is a package with tools to facilitate implementation of
+#' workflows
 #' requiring miRNA prediction through access to multiple prediction results 
 #' (DIANA, Targetscan, PicTar and Miranda) and their aggregation. 
 #' Three aggregation methods are available: minimum, maximum and geometric mean,
@@ -33,7 +34,7 @@ NULL
 
 #' @title Get aggregated ordered list of predicted targets for miRNA
 #'
-#' @details This method performs aggregation of target lists from multiple 
+#' @description This method performs aggregation of target lists from multiple 
 #' sources. Aggregated list is more accurate than any list from a single 
 #' source. Multiple aggregation methods are available.Direct target data from 
 #' four sources for Human and Mouse is supplied through \code{miRNAtap.db} 
@@ -45,19 +46,30 @@ NULL
 #' method = "geom", promote = TRUE, ...)
 #' @param mirna miRNA in a standard format
 #' @param sources a list of sources to use for aggregation, 
-#' default c('pictar','diana','targetscan','miranda')
-#' @param species species in a standard three-letter acronym, 'mmu' and 'hsa' 
-#' available as direct targets, 'rno' as homology translations, default 'mmu'
+#' default is all frour sources, i.e. 
+#' \code{c('pictar','diana','targetscan','miranda')}
+#' @param species species in a standard three-letter acronym, \code{'mmu'} 
+#' and \code{'hsa'} 
+#' available as direct targets, \code{'rno'} as homology translations, 
+#' default \code{'mmu'}
 #' @param min_src minimum number of sources required for a target to be 
 #' considered, default 2
-#' @param method method of aggregation - choose from 'min', 'max', 'geom', 
-#' 'min' is a minimum of ranks, 'max' is a maximum of ranks, and default 'geom' 
-#' is based on geometric mean of the ranks, it proves to be the most accurate.
+#' @param method method of aggregation - choose from \code{'min'}, 
+#' \code{'max'}, and \code{'geom'}; 
+#' \code{'min'} is a minimum of ranks, \code{'max'} is a maximum of ranks,
+#' and default \code{'geom'} 
+#' is based on geometric mean of the ranks which proves to be the most 
+#' accurate method.
 #' @param promote add weights to improve accuracy of the method, default TRUE
 #' @param ... any optional arguments
-#' @return a data.frame object where row names are entrez IDs of target genes, 
-#' ranks from individual sources and aggregated rank are shown in columns.
-#' If no targets are found in any of the sources NULL and a warning is returned.
+#' @return \code{data.frame} object where row names are entrez IDs of target
+#' genes, ranks from individual sources and aggregated rank are shown 
+#' in columns.
+#' If no targets are found in any of the sources \code{NULL} and a warning
+#' are returned.
+#' @details Tuning \code{min_src} parameter is an easy way of prioritising 
+#' precision at the top of the list (high values) or total recall (low values).
+#' For the four default input sources, recommended values are 2 or 3
 #' @export
 #' @author Maciej Pajak \email{m.pajak@@sms.ed.ac.uk}
 #' @references
@@ -79,7 +91,6 @@ NULL
 #' miRNA to disease association. Nucleic Acids Research, 39(Web Server issue), 
 #' W145-8.
 #' @examples
-#' 
 #' targets <- getPredictedTargets('let-7a',species='mmu', method = 'min') 
 #' head(targets) #top of the list with minimum aggregation
 #' targets2 <- getPredictedTargets('let-7a',species='mmu', method='geom') 
@@ -88,14 +99,12 @@ getPredictedTargets <- function(mirna,
             sources=c('pictar','diana','targetscan','miranda'), 
             species = 'mmu', min_src = 2, method = 'geom',
             promote = TRUE, ...) {
-
-            if (!(species %in% c('mmu','hsa','rno','dme'))) {
+    
+    if (!(species %in% c('mmu','hsa','rno','dme'))) {
         warning(paste('species ',species,
                 ' not supported in the current version',sep=''))
         return(NULL)
     }
-    
-    #conL <- targetPredictor.db:::.getTpConnection()
     n_sources <- length(sources)
     
     if (n_sources<min_src) {
@@ -112,7 +121,6 @@ getPredictedTargets <- function(mirna,
         warning('unrecognised miRNA')
         return(NULL)
     }
-
     
     l_outputs <- list()
     
@@ -121,7 +129,7 @@ getPredictedTargets <- function(mirna,
     if (substr(mirna,1,3)==species) {
         mirna=substr(mirna,5,15)
     }
-
+    
     for (src in sources) {
         l_outputs[[src]] <- getTargetsFromSource(mirna, species, source = src)
     }
@@ -131,7 +139,6 @@ getPredictedTargets <- function(mirna,
                 function(...) .mergeRename(..., by='GeneID', all=TRUE), 
                 l_outputs))
     
-
     if (is.null(merged.scores)) { # | dim(merged.scores)[1]<1 
         warning(paste('no targets found for mirna ', mirna, sep = ''))
         return(NULL)
@@ -151,7 +158,7 @@ getPredictedTargets <- function(mirna,
         'sources which returned a target list<min_src, min_src reduced to ',
         n_valid_srcs,sep=''))
         min_src <- n_valid_srcs
-    }    
+    }
     
     merged.scores <- merged.scores[,valid_srcs]
     
@@ -166,19 +173,34 @@ getPredictedTargets <- function(mirna,
 ####################
 # Ranking function
 ####################
-#' @title Auxiliary targetPredictor functions
+#' @title Aggreagate ranks from multiple sources with various methods
 #'
-#' @details This function performs aggregation phase of target prediction for 
-#' \code{\link{getPredictedTargets}} function
-#' @param ranks data.frame with ordered scored
+#' @description This function performs aggregation phase of target 
+#' prediction for \code{\link{getPredictedTargets}}. 
+#' Consensus ranking is derived from multiple individual rankings. 
+#' Available methods include minimum, maximum and geometric mean with further 
+#' tuning parameters which promote true positives at the top of the final 
+#' ranking 
+#' @export
+#' @param ranks \code{data.frame} with ordered scores
 #' @param n_valid_srcs number of valid sources in the dataset
 #' @param min_src minimum acceptable number fo sources
-#' @param method 'min','max', or 'geom'
-#' @param promote add weights to improve accuracy of the method, default TRUE
-#' @return data.frame object with aggregate ranks
-#' @author Maciej Pajak \email{m.pajak@@sms.ed.ac.uk} 
+#' @param method \code{'min'},\code{'max'}, or \code{'geom'},
+#' default \code{'geom'}
+#' @param promote add weights to improve accuracy of the method, default 
+#' \code{TRUE}
+#' @return \code{data.frame} object with ranks per source and aggregate ranks
+#' @author Maciej Pajak \email{m.pajak@@sms.ed.ac.uk}
+#' @examples
+#' data = data.frame(GeneID=c("15364", "56520", "57781", "58180", "18035"),
+#'                 source1scores=c(0.9,0.5,0.3,NA,NA),
+#'                 source2scores=c(0.7,NA,0.8,0.6,0.5),
+#'                 source3scores=c(0.5,NA,0.3,0.1,0.2))
+#' data #dataframe with scores
+#' aggregateRanks(data, n_valid_srcs=3, min_src=2, method='geom')
+#' #note how gene 56520 is eliminated as it appeared in fewer than 2 sources
 aggregateRanks <- function(ranks, n_valid_srcs, min_src,
-                            method = 'min', promote=TRUE) {
+                            method = 'geom', promote=TRUE) {
 
     if (n_valid_srcs>1) {
         target_found <- rowSums(!is.na(ranks[,2:(n_valid_srcs+1)])) #n_sources

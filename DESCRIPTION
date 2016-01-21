@@ -1,21 +1,33 @@
 Package: miRNAtap
 Type: Package
 Title: miRNAtap: microRNA Targets - Aggregated Predictions
-Version: 1.5.0
-Date: 2015-09-10
+Version: 1.5.1
+Date: 2016-01-20
 Author: Maciej Pajak, T. Ian Simpson
 Maintainer: Maciej Pajak <m.pajak@sms.ed.ac.uk>
 Description: The package facilitates implementation of workflows
-        requiring miRNA predictions, it allows to integrate ranked
-        miRNA target predictions from multiple sources available online
-        and aggregate them with various methods which improves quality
-        of predictions above any of the single sources. Currently
-        predictions are available for Homo sapiens, Mus musculus and
-        Rattus norvegicus (the last one through homology translation).
+    requiring miRNA predictions, it allows to integrate ranked
+    miRNA target predictions from multiple sources available online
+    and aggregate them with various methods which improves quality
+    of predictions above any of the single sources. Currently
+    predictions are available for Homo sapiens, Mus musculus and
+    Rattus norvegicus (the last one through homology translation).
 License: GPL-2
-Depends: R (>= 3.2.0), AnnotationDbi
-Imports: DBI, RSQLite, stringr, sqldf, plyr, methods
-Suggests: topGO, org.Hs.eg.db, miRNAtap.db,
+Depends:
+    R (>= 3.2.0),
+    AnnotationDbi
+Imports:
+    DBI,
+    RSQLite,
+    stringr,
+    sqldf,
+    plyr,
+    methods
+Suggests:
+    topGO,
+    org.Hs.eg.db,
+    miRNAtap.db,
     testthat
 biocViews: Software, Classification, Microarray, Sequencing, miRNA
 Roxygen: list(wrap = FALSE)
+RoxygenNote: 5.0.1
