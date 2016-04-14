@@ -1,8 +1,8 @@
 Package: miRNAtap
 Type: Package
 Title: miRNAtap: microRNA Targets - Aggregated Predictions
-Version: 1.5.1
-Date: 2016-01-20
+Version: 1.5.2
+Date: 2016-04-14
 Author: Maciej Pajak, T. Ian Simpson
 Maintainer: Maciej Pajak <m.pajak@sms.ed.ac.uk>
 Description: The package facilitates implementation of workflows

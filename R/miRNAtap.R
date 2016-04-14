@@ -43,7 +43,7 @@ NULL
 #'
 #' @usage getPredictedTargets(mirna, sources = c("pictar", "diana", 
 #' "targetscan", "miranda"), species = "mmu", min_src = 2, 
-#' method = "geom", promote = TRUE, ...)
+#' method = "geom", promote = TRUE, synonyms = TRUE, both_strands = FALSE, ...)
 #' @param mirna miRNA in a standard format
 #' @param sources a list of sources to use for aggregation, 
 #' default is all frour sources, i.e. 
@@ -61,6 +61,11 @@ NULL
 #' is based on geometric mean of the ranks which proves to be the most 
 #' accurate method.
 #' @param promote add weights to improve accuracy of the method, default TRUE
+#' @param synonyms when searching for -3p miRNA automatically also searches for
+#' miRNA with the same name but ending with * (some databases list -3p miRNA
+#' this way) and other way around, similarly for -5p miRNA, default TRUE
+#' @param both_strands overrides \code{synonyms} and searches for targets of
+#' both -5p and -3p strands together
 #' @param ... any optional arguments
 #' @return \code{data.frame} object where row names are entrez IDs of target
 #' genes, ranks from individual sources and aggregated rank are shown 
@@ -98,7 +103,7 @@ NULL
 getPredictedTargets <- function(mirna,
             sources=c('pictar','diana','targetscan','miranda'), 
             species = 'mmu', min_src = 2, method = 'geom',
-            promote = TRUE, ...) {
+            promote = TRUE, synonyms = TRUE, both_strands = FALSE, ...) {
     
     if (!(species %in% c('mmu','hsa','rno','dme'))) {
         warning(paste('species ',species,
@@ -131,7 +136,9 @@ getPredictedTargets <- function(mirna,
     }
     
     for (src in sources) {
-        l_outputs[[src]] <- getTargetsFromSource(mirna, species, source = src)
+        l_outputs[[src]] <- getTargetsFromSource(mirna, species, source = src,
+                                                 synonyms = synonyms,
+                                                 both_strands = both_strands)
     }
     
     #it creates non-unique colnames, hence warning surpression
@@ -214,8 +221,12 @@ aggregateRanks <- function(ranks, n_valid_srcs, min_src,
     
     row.names(ranks) <- ranks$GeneID
     
-    data1 <- ranks[,2:(n_valid_srcs+1)] #n_sources
-    data1 <- as.data.frame(data1)
+    if (n_valid_srcs==1) {
+        data1 <- data.frame(source1scores=ranks[,2], row.names = row.names(ranks))
+    } else {
+        data1 <- ranks[,2:(n_valid_srcs+1)] #n_sources
+        data1 <- as.data.frame(data1)
+    }
     num.gene <- dim(data1)[1]
     
     if (num.gene<1) {
@@ -237,11 +248,11 @@ reduce min_srcs parameter or add sources')
     
     
     if (method=='geom') {
-        result = .aggregateGeom(data1, rank_ind, promote)
+        result <- .aggregateGeom(data1, rank_ind, promote)
     }  else if (method=='max') {
-        result = .aggregateMinMax(data1, rank_ind, minmax=method)
+        result <- .aggregateMinMax(data1, rank_ind, minmax=method)
     } else { #even if it's something invalid, still use min
-        result = .aggregateMinMax(data1, rank_ind, minmax=method)
+        result <- .aggregateMinMax(data1, rank_ind, minmax=method)
     } #more methods possible to add, so far geom suffices and scores well
     
     colnames(result) <- c(paste('source_',1:n_valid_srcs,sep=''),
@@ -291,9 +302,37 @@ reduce min_srcs parameter or add sources')
     return(merged)
 }
 
+.mirnaSynonyms <- function(mirna) {
+    if (str_sub(mirna,start=-1)=='*') {
+        return(c(mirna, paste0(str_sub(mirna, start=1, end=-2),'-3p')))
+    } else if (str_sub(mirna,start=-3)=='-3p') {
+        return(c(mirna, paste0(str_sub(mirna, start=1, end=-4),'*')))
+    } else if (str_sub(mirna,start=-3)=='-5p') {
+        return(c(mirna, str_sub(mirna, start=1, end=-4)))
+    } else  {
+        return(c(mirna, paste0(mirna,'-5p')))
+    }
+}
 
+.allBothStrands <- function(mirna) {
+    base <- str_match(mirna, '[a-zA-Z]+-[0-9a-z]+')[1,] 
+    if (!is.na(base)) {
+       return(paste0(base,c('','-5p','*','-3p')))
+    } else {
+      return(mirna)
+    }
+  
+}
 
-
+.justBaseName <- function(mirna) {
+  base <- str_match(mirna, '[a-zA-Z]+-[0-9a-z]+')[1,] 
+  if (!is.na(base)) {
+    return(base)
+  } else {
+    return(mirna)
+  }
+  
+}
 
 
 

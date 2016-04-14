@@ -13,6 +13,11 @@
 #' \code{'targetscan'}, and \code{'pictar'}.
 #' @param species species in a standard three-letter acronym, default 
 #' \code{'mmu'}
+#' @param synonyms when searching for -3p miRNA automatically also searches for
+#' miRNA with the same name but ending with * (some databases list -3p miRNA
+#' this way) and other way around, similarly for -5p miRNA, default TRUE
+#' @param both_strands overrides \code{synonyms} and searches for targets of
+#' both -5p and -3p strands together
 #' @return \code{data.frame} object with entrez IDs of target genes and their
 #' scores, if there are no targets found for a given miRNA in a given 
 #' table then an empty 
@@ -39,23 +44,44 @@
 #' targets <- getTargetsFromSource('let-7a', species='hsa', source='targetscan')
 #' head(targets) 
 #' #top of the listof human targets of let-7a from TargetScan only
-getTargetsFromSource <- function(mirna, species = 'mmu', source = 'diana') {
+getTargetsFromSource <- function(mirna, species = 'mmu', source = 'diana',
+                                 synonyms = TRUE, both_strands = FALSE) {
     tryCatch( {
         require(miRNAtap.db)
         
         cols <- c('GeneID','score')
         tabname <- paste(source,'_mapped_',species,sep='')
         tabnameUC <- toupper(tabname)
-
+        
+        #res - unique names of mirna of rbind of results of all synonyms!
+        #if both strands then add wildcard to keys=mirna
+        
+        if (synonyms) {
+            syn_mirnas <- .mirnaSynonyms(mirna)
+        } else {
+            syn_mirnas <- mirna
+        }
+         
+        if (both_strands) { # sql wildcard at the end of base name
+          synonyms <- paste0(.justBaseName(mirna),'%')
+        }
+        
         if (tabnameUC %in% keytypes(miRNAtap.db)) {
-        res <- select(miRNAtap.db,keys=mirna,columns=NULL,
-                        keytype=tabnameUC)[,cols]
+        res <- Reduce(rbind, lapply(syn_mirnas, 
+                function(x)  
+                    select(miRNAtap.db,keys=x,columns=NULL,
+                                                keytype=tabnameUC)[,cols]
+          ))
+           
         } else if (species=='rno') {
         tabname <- paste(source,'_mapped_mmu', sep='')
         tabnameUC <- toupper(tabname)
         if (tabnameUC %in% keytypes(miRNAtap.db)) {
-            res <- select(miRNAtap.db, keys=mirna, columns=NULL, 
-                            keytype=tabnameUC) 
+          res <- Reduce(rbind, lapply(syn_mirnas, 
+                                      function(x)  
+                                        select(miRNAtap.db,keys=x,columns=NULL,
+                                               keytype=tabnameUC)
+          ))  
             res <- translate(res,from='mmu',to=species)[,cols]
         } else {
             return(NULL)

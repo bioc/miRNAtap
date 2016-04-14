@@ -4,7 +4,8 @@
 \alias{getTargetsFromSource}
 \title{Get target list from a single source}
 \usage{
-getTargetsFromSource(mirna, species = "mmu", source = "diana")
+getTargetsFromSource(mirna, species = "mmu", source = "diana",
+  synonyms = TRUE, both_strands = FALSE)
 }
 \arguments{
 \item{mirna}{miRNA in a standard format}
@@ -15,6 +16,13 @@ getTargetsFromSource(mirna, species = "mmu", source = "diana")
 \item{source}{a source target prediction algorithm table to query, default 
 \code{'diana'}, other possible values are \code{'miranda'}, 
 \code{'targetscan'}, and \code{'pictar'}.}
+
+\item{synonyms}{when searching for -3p miRNA automatically also searches for
+miRNA with the same name but ending with * (some databases list -3p miRNA
+this way) and other way around, similarly for -5p miRNA, default TRUE}
+
+\item{both_strands}{overrides \code{synonyms} and searches for targets of
+both -5p and -3p strands together}
 }
 \value{
 \code{data.frame} object with entrez IDs of target genes and their

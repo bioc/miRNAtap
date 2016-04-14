@@ -6,7 +6,7 @@
 \usage{
 getPredictedTargets(mirna, sources = c("pictar", "diana", 
 "targetscan", "miranda"), species = "mmu", min_src = 2, 
-method = "geom", promote = TRUE, ...)
+method = "geom", promote = TRUE, synonyms = TRUE, both_strands = FALSE, ...)
 }
 \arguments{
 \item{mirna}{miRNA in a standard format}
@@ -31,6 +31,13 @@ is based on geometric mean of the ranks which proves to be the most
 accurate method.}
 
 \item{promote}{add weights to improve accuracy of the method, default TRUE}
+
+\item{synonyms}{when searching for -3p miRNA automatically also searches for
+miRNA with the same name but ending with * (some databases list -3p miRNA
+this way) and other way around, similarly for -5p miRNA, default TRUE}
+
+\item{both_strands}{overrides \code{synonyms} and searches for targets of
+both -5p and -3p strands together}
 
 \item{...}{any optional arguments}
 }

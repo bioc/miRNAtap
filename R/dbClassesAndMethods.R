@@ -78,26 +78,49 @@
     return(res)
 }
 
+# .select <- function(x, keys, columns, keytype) {
+#   
+#   tabNames <- .getTableNames(x)
+#   lckeytype <- names(tabNames[tabNames %in% keytype])
+#   
+#   con <- dbconn(x)
+#   
+#   if (keytype %in% c('HOMOLOGENE_RAW')) {
+#     one_string <- paste('"', paste(keys,collapse='","'), '"', sep='')
+#     sql <- paste('SELECT * FROM ', lckeytype, 
+#                  ' WHERE entrez IN (',one_string,')', sep='')
+#   } else {
+#     if (length(keys)>1) {
+#       keys <- keys[1]
+#     } #only searching by single mirna allowed
+#     sql <- paste('SELECT * FROM ', lckeytype, 
+#                  ' WHERE mirna LIKE "%', keys, '%"', sep='')
+#   }
+#   res <- dbGetQuery(con, sql)
+#   return(res)        
+# }
+
 .select <- function(x, keys, columns, keytype) {
-    
-    tabNames <- .getTableNames(x)
-    lckeytype <- names(tabNames[tabNames %in% keytype])
-    
-    con <- dbconn(x)
-    
-    if (keytype %in% c('HOMOLOGENE_RAW')) {
-        one_string <- paste('"', paste(keys,collapse='","'), '"', sep='')
-        sql <- paste('SELECT * FROM ', lckeytype, 
-                ' WHERE entrez IN (',one_string,')', sep='')
-    } else {
-        if (length(keys)>1) {
-            keys <- keys[1]
-        } #only searching by single mirna allowed
-        sql <- paste('SELECT * FROM ', lckeytype, 
-                ' WHERE mirna LIKE "%', keys, '%"', sep='')
-    }
-    res <- dbGetQuery(con, sql)
-    return(res)        
+  
+  tabNames <- .getTableNames(x)
+  lckeytype <- names(tabNames[tabNames %in% keytype])
+  
+  con <- dbconn(x)
+  
+  if (keytype %in% c('HOMOLOGENE_RAW')) {
+    one_string <- paste('"', paste(keys,collapse='","'), '"', sep='')
+    sql <- paste('SELECT * FROM ', lckeytype, 
+                 ' WHERE entrez IN (',one_string,')', sep='')
+  } else {
+    if (length(keys)>1) {
+      keys <- keys[1]
+    } #only searching by single mirna allowed
+    sql <- paste('SELECT * FROM ', lckeytype, 
+                 ' WHERE mirna LIKE "%', keys, '"', sep='') 
+    #exact matches at the end
+  }
+  res <- dbGetQuery(con, sql)
+  return(res)        
 }
 
 
