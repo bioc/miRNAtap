@@ -325,7 +325,7 @@ reduce min_srcs parameter or add sources')
 }
 
 .justBaseName <- function(mirna) {
-  base <- str_match(mirna, '[a-zA-Z]+-[0-9a-z]+')[1,] 
+  base <- str_match(mirna, '[a-zA-Z\\-]+-[0-9a-z]+')[1,] 
   if (!is.na(base)) {
     return(base)
   } else {

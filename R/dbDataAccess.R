@@ -63,7 +63,7 @@ getTargetsFromSource <- function(mirna, species = 'mmu', source = 'diana',
         }
          
         if (both_strands) { # sql wildcard at the end of base name
-          synonyms <- paste0(.justBaseName(mirna),'%')
+          syn_mirnas <- paste0(.justBaseName(mirna),'%')
         }
         
         if (tabnameUC %in% keytypes(miRNAtap.db)) {
