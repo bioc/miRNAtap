@@ -8,11 +8,15 @@ context('main function high level tests')
 
 
 test_that("number of output cols corresponds to input parameters", {
-    expect_equal(dim(getPredictedTargets('let-7a',species='mmu',
+    expect_gte(dim(getPredictedTargets('let-7a',species='mmu',
                                         method='geom'))[2],6)
     expect_equal(dim(getPredictedTargets('let-7a',species='mmu', method='geom',
                                         sources=c('pictar','diana',
-                                                    'targetscan')
+                                                'targetscan', 'miranda')
+                                        ))[2], 6)
+    expect_equal(dim(getPredictedTargets('let-7a',species='mmu', method='geom',
+                                        sources=c('pictar','diana',
+                                                'targetscan')
                                         ))[2], 5)
     expect_equal(dim(getPredictedTargets('let-7a',species='mmu', method='geom',
                                         sources=c('pictar','diana'),
@@ -41,12 +45,12 @@ test_that("increasing min_src decreases recall", {
     res4 <- getPredictedTargets("let-7a", species = "mmu",
                                 method = "geom", min_src = 4)
     
-    expect_more_than(dim(res1)[1],
+    expect_gte(dim(res1)[1],
                     dim(res2)[1]-1)
-    expect_more_than(dim(res2)[1],
+    expect_gte(dim(res2)[1],
                     dim(res3)[1]-1)
-    expect_more_than(dim(res3)[1],
+    expect_gte(dim(res3)[1],
                     dim(res4)[1]-1)
-    expect_more_than(dim(res4)[1],
+    expect_gte(dim(res4)[1],
                     0)
 })
