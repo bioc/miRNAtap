@@ -5,15 +5,15 @@
 \title{Get aggregated ordered list of predicted targets for miRNA}
 \usage{
 getPredictedTargets(mirna, sources = c("pictar", "diana", 
-"targetscan", "miranda"), species = "mmu", min_src = 2, 
+"targetscan", "miranda","mirdb"), species = "mmu", min_src = 2, 
 method = "geom", promote = TRUE, synonyms = TRUE, both_strands = FALSE, ...)
 }
 \arguments{
 \item{mirna}{miRNA in a standard format}
 
 \item{sources}{a list of sources to use for aggregation, 
-default is all frour sources, i.e. 
-\code{c('pictar','diana','targetscan','miranda')}}
+default is all five sources, i.e. 
+\code{c('pictar','diana','targetscan','miranda','mirdb')}}
 
 \item{species}{species in a standard three-letter acronym, \code{'mmu'} 
 and \code{'hsa'} 
@@ -52,28 +52,27 @@ are returned.
 This method performs aggregation of target lists from multiple 
 sources. Aggregated list is more accurate than any list from a single 
 source. Multiple aggregation methods are available.Direct target data from 
-four sources for Human and Mouse is supplied through \code{miRNAtap.db} 
+five sources for Human and Mouse is supplied through \code{miRNAtap.db} 
 package, for Rat targets are derived through homology translations whenever 
 direct ones are not available.
 }
 \details{
 Tuning \code{min_src} parameter is an easy way of prioritising 
 precision at the top of the list (high values) or total recall (low values).
-For the four default input sources, recommended values are 2 or 3
+For the five default input sources, recommended values are 2, 3, or 4.
 }
 \examples{
-targets <- getPredictedTargets('let-7a',species='mmu', method = 'min') 
+targets <- getPredictedTargets('let-7a',species='hsa', method = 'min') 
 head(targets) #top of the list with minimum aggregation
-targets2 <- getPredictedTargets('let-7a',species='mmu', method='geom') 
+targets2 <- getPredictedTargets('let-7a',species='hsa', method='geom') 
 head(targets2) #top of the list with geometric mean aggregation
 }
 \author{
 Maciej Pajak \email{m.pajak@sms.ed.ac.uk}
 }
 \references{
-Friedman, R. C., Farh, K. K.-H., Burge, C. B., and Bartel, D. P. (2009). 
-Most mammalian mRNAs are conserved targets of microRNAs. Genome research, 
-19(1):92-105.
+Agarwal V, Bell GW, Nam J, Bartel DP. Predicting effective microRNA 
+target sites in mammalian mRNAs. eLife, 4:e05005, (2015).
 
 Griffiths-Jones, S., Saini, H. K., van Dongen, S., and Enright, A. J. 
 (2008). miRBase: tools for microRNA genomics. Nucleic acids research, 
@@ -83,10 +82,14 @@ Lall, S., Grun, D., Krek, A., Chen, K., Wang, Y.-L., Dewey, C. N., ...
 Rajewsky, N. (2006). A genome-wide map of conserved microRNA targets in 
 C. elegans. Current biology : CB, 16(5):460-71.
 
-Maragkakis, M., Vergoulis, T., Alexiou, P., Reczko, M., Plomaritou, K., 
-Gousis, M., ... Hatzigeorgiou, A. G. (2011). DIANA-microT Web server 
-upgrade supports Fly and Worm miRNA target prediction and bibliographic 
-miRNA to disease association. Nucleic Acids Research, 39(Web Server issue), 
-W145-8.
+Paraskevopoulou MD, Georgakilas G, Kostoulas N, Vlachos IS, Vergoulis 
+T, Reczko M, Filippidis C, Dalamagas T, Hatzigeorgiou AG., 
+"DIANA-microT web server v5.0: service integration into miRNA 
+functional analysis workflows.", Nucleic Acids Res. 2013 
+Jul;41(Web Server issue):W169-73.
+
+Wong N and Wang X (2015) miRDB: an online resource for microRNA 
+target prediction and functional annotations. Nucleic Acids Research. 
+43(D1):D146-152.
 }
 

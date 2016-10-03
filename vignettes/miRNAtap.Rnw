@@ -16,6 +16,7 @@
 
 
 \begin{document}
+\SweaveOpts{concordance=TRUE}
 
 \title{{\bf miRNAtap} example use}
 \author{Maciej Pajak, Ian Simpson}
@@ -36,9 +37,9 @@ microRNA (miRNA) is a 18-22nt long single strand that binds with RISC (RNA
 induced silencing complex) and targets mRNAs effectively reducing their 
 translation rates.
 
-Targets are aggregated from 4 most commonly cited prediction algorithms: 
+Targets are aggregated from 5 most commonly cited prediction algorithms: 
 DIANA \citep{Maragkakis2011}, Miranda \citep{Enright2003}, PicTar 
-\citep{Lall2006} and TargetScan \citep{Friedman2009}.
+\citep{Lall2006}, TargetScan \citep{Friedman2009}, and miRDB \citep{Wong2015}.
 
 Programmatic access to sources of data is crucial when streamlining the 
 workflow of our analysis, this way we can run similar analysis for multiple 
