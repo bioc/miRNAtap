@@ -71,17 +71,19 @@ installed Bioconductor packages on your system then you can skip the two
 lines below.
 
 <<eval = FALSE>>=
-source("http://bioconductor.org/biocLite.R")
-biocLite()
+if (!requireNamespace("BiocManager", quietly=TRUE))
+    install.packages("BiocManager")
+BiocManager::install()
 @
 
 Once the core Bioconductor packages are installed, we can install the 
 miRNAtap and accompanying database {\tt miRNAtap.db} package by
 
 <<eval = FALSE>>=
-source("http://bioconductor.org/biocLite.R")
-biocLite("miRNAtap")
-biocLite("miRNAtap.db")
+if (!requireNamespace("BiocManager", quietly=TRUE))
+    install.packages("BiocManager")
+BiocManager::install("miRNAtap")
+BiocManager::install("miRNAtap.db")
 @
 
 \section{Workflow}
@@ -97,9 +99,10 @@ In case we don't have {\tt topGO} or GO annotations on our machine we need
 to install them first:
 
 <<eval = FALSE>>=
-source("http://bioconductor.org/biocLite.R")
-biocLite("topGO")
-biocLite("org.Hs.eg.db")
+if (!requireNamespace("BiocManager", quietly=TRUE))
+    install.packages("BiocManager")
+BiocManager::install("topGO")
+BiocManager::install("org.Hs.eg.db")
 @
 
 Then, let's load the required libraries
